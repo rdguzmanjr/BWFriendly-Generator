@@ -13,7 +13,7 @@ let wsp=size.split("x")[0]+"px";
 let hsp=size.split("x")[1]+"px";
 let CTag="\t<script type=\"text/javascript\">\n\t\tvar clickTag = \"{{CLICK_URL}}"+defaultURL+"\";\n\t</script>\n"
 let lines;
-let tmr;
+let tmr; 
 let dirName=[];
  output={};
  
