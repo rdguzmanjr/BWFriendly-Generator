@@ -1,7 +1,8 @@
 let defaultURL="http://wwww.google.com";
 
 let respo=false;
-let s3URLFolder="nars/nars_hotspot"
+
+let s3URLFolder = "nars/nars_hotspot"
 let s3URL =     "https://assets.nativetouch.io/2023/"+s3URLFolder;
 let s3URLimage = s3URL+"/images/";
 let s3URLJs =   s3URL+"/js/";
@@ -19,10 +20,12 @@ let dirName=[];
  
 
  function fetchValue(){
-    s3URLimage=document.getElementById("autocomplete-1676039400810-input").value;
-    s3URLJs=document.getElementById("autocomplete-1676039402608-input").value;
-    size=document.getElementById("select-1676039459656").value;
+    s3URLFolder=document.getElementById("autocomplete-1676039400810-input").value;
+    size= document.getElementById("select-1676039459656").value;
     respo=document.getElementById("checkbox-group-1676039463256-0").checked;
+    s3URL =  "https://assets.nativetouch.io/2023/"+s3URLFolder;
+    s3URLimage = s3URL+"/images/"; 
+    s3URLJs =   s3URL+"/js/";
     ws=size.split("x")[0];
     hs=size.split("x")[1];
     wsp=size.split("x")[0]+"px";
