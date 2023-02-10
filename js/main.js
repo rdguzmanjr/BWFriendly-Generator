@@ -1,7 +1,11 @@
 let defaultURL="http://wwww.google.com";
+
 let respo=false;
-let s3URLimage= "https://assets.nativetouch.io/2023/nars/nars_hotspot/images/";
-let s3URLJs =   "https://assets.nativetouch.io/2023/nars/nars_hotspot/js/";
+let s3URLFolder="nars/nars_hotspot"
+let s3URL =     "https://assets.nativetouch.io/2023/"+s3URLFolder;
+let s3URLimage = s3URL+"/images/";
+let s3URLJs =   s3URL+"/js/";
+
 let size="320x480";
 let ws=size.split("x")[0];
 let hs=size.split("x")[1];
