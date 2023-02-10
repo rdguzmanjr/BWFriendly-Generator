@@ -108,11 +108,11 @@ let dirName=[];
             mycss=o.css;
             myjs=o.js;
             str=myhtml;
-            if(mycss!='undefined'){
-                str=insertAfterMatch(str,"\n<style>\n"+mycss+"\n</style>\n",/<\/head/g)      
+            if(mycss!=undefined){
+                str=insertAfterMatch(str,"\n<style>\n"+mycss+"\n</style>\n",/<\/head/g);
             }
-            if(myjs!='undefined'){
-                str=insertAfterMatch(str,"\n<script>\n"+myjs+"\n</script>\n",/<\/body/g)      
+            if(myjs!=undefined){
+                str=insertAfterMatch(str,"\n<script>\n"+myjs+"\n</script>\n",/<\/body/g);    
              }
              download(dir,str)
           // sendRequestToServer(str,dir);
