@@ -7,17 +7,22 @@ let s3URL =     "https://assets.nativetouch.io/2023/"+s3URLFolder.replace(/^\/|\
 let s3URLimage = s3URL+"/images/";
 let s3URLJs =   s3URL+"/js/";
 
-let size="320x480";
+/*let size="320x480";
 let ws=size.split("x")[0];
 let hs=size.split("x")[1];
 let wsp=size.split("x")[0]+"px";
 let hsp=size.split("x")[1]+"px";
+*/
+let adSize={};
+let output={};
+
 let CTag="\t<script type=\"text/javascript\">\n\t\tvar clickTag = \"{{CLICK_URL}}"+defaultURL+"\";\n\t</script>\n"
 let lines;
 let tmr; 
 let dirName="";
- output={};
- 
+let isInter;
+
+
 
  function fetchValue(){
     s3URLFolder=document.getElementById("folderinputbox").value;
@@ -115,9 +120,6 @@ let dirName="";
              }
              str=processMetaAdSize(str);
              str=processReplaceURL(str);
-             if(!respo)
-             str=updateCssContainer(str) 
-
              download(dirName,str)
         },1000)
  }
@@ -147,30 +149,39 @@ let dirName="";
     }else if(str.search(/js\//g)!=-1){
        str=str.replace(/js\//g, s3URLJs);
     }
-
     return str;
 }
-
- function processMetaAdSize(str){
-    
+function processMetaAdSize(str){
+      let m=str.match(/\.container\s*{([^{}]+)}/g); 
+      let n=m[0].match(/width\s*:\s*((\d+)(px|%))\s*;/);
+      let h=m[0].match(/height\s*:\s*((\d+)(px|%))\s*;/);
+      if(n[3]!="%"&&h[3]!="%"){
+        adSize.width=n[2];
+        adSize.height=h[2];
+      }else{
+        adSize.width="320";
+        adSize.height="480";
+        if(!respo)
+        str=updateContainerStyle(str);
+    }
     if(str.search(/<meta.+?ad\.size.+("|')>/g)!=-1)
-    str=str.replace(/<meta.+?ad\.size.+("|')>/g,"<meta name=\"ad.size\" content=\"width="+ws+",height="+hs+"\">");
+    str=str.replace(/<meta.+?ad\.size.+("|')>/g,"<meta name=\"ad.size\" content=\"width="+adSize.width+",height="+adSize.height+"\">");
     else
-    str=insertBeforeMatch(str,"\n\t<meta name=\"ad.size\" content=\"width="+ws+",height="+hs+"\">",/<\/title\s*>/g);
+    str=insertBeforeMatch(str,"\n\t<meta name=\"ad.size\" content=\"width="+adSize.width+",height="+adSize.height+"\">",/<\/title\s*>/g);
     
     return str;
  }
 
-
- function updateCssContainer(str) { 
+ function updateContainerStyle(str) { 
   let [matchedString, newString] = extractMatch(str,/\.container\s*{([^{}]+)}/g);
   if (matchedString) {
-      wiwi=matchedString.replace(/width\s*(:(.*?);)/, 'width:' + wsp + ';');
-      hihi=wiwi.replace(/height\s*(:(.*?);)/, 'height:' + hsp + ';');
+      wiwi=matchedString.replace(/width\s*(:(.*?);)/, 'width:'+adSize.width+'px;');
+      hihi=wiwi.replace(/height\s*(:(.*?);)/, 'height:'+adSize.height+'px;');
       str=newString.replace("**tobereplaced**",hihi)
   } 
   return str;
 }
+
  function download(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(text));
