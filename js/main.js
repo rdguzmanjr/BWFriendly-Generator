@@ -61,6 +61,7 @@ let dirName="";
                         });
                     }*/
                 } else if (item.isDirectory) {
+                     dirName=item.name;
                     readDirectory(item);
                 }
             }
@@ -71,9 +72,7 @@ let dirName="";
  
  function readDirectory(item) {
      const reader = item.createReader();
-     dirName=item.name;
      reader.readEntries((entries) => {
-
          for (let i = 0; i < entries.length; i++) {
              const entry = entries[i];
              if (entry.isFile && entry.name!='.DS_Store' && !entry.name.endsWith('.min.js')) {
