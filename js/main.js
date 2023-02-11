@@ -3,7 +3,7 @@ let defaultURL="http://wwww.google.com";
 let respo=false;
 
 let s3URLFolder = "nars/nars_hotspot"
-let s3URL =     "https://assets.nativetouch.io/2023/"+s3URLFolder;
+let s3URL =     "https://assets.nativetouch.io/2023/"+s3URLFolder.replace(/^\/|\/$/g, "");
 let s3URLimage = s3URL+"/images/";
 let s3URLJs =   s3URL+"/js/";
 
@@ -20,26 +20,13 @@ let dirName=[];
  
 
  function fetchValue(){
-    s3URLFolder=document.getElementById("autocomplete-1676039400810-input").value;
-    size= document.getElementById("select-1676039459656").value;
+    s3URLFolder=document.getElementById("folderinputbox").value;
     respo=document.getElementById("checkbox-group-1676039463256-0").checked;
-    s3URL =  "https://assets.nativetouch.io/2023/"+s3URLFolder;
+    s3URL =  "https://assets.nativetouch.io/2023/"+s3URLFolder.replace(/^\/|\/$/g, "");;
     s3URLimage = s3URL+"/images/"; 
     s3URLJs =   s3URL+"/js/";
-    ws=size.split("x")[0];
-    hs=size.split("x")[1];
-    wsp=size.split("x")[0]+"px";
-    hsp=size.split("x")[1]+"px";
-    console.log("s3URLimage"+s3URLimage);
-    console.log("s3URLJs"+s3URLJs);
-    console.log("size"+size);
-    console.log("respo "+respo);
-    console.log(typeof(respo));
-   
  }
 
-
- 
 //let str;
  //DROPPER
  var dropZone = document.getElementById('drop-zone');
@@ -57,24 +44,28 @@ let dirName=[];
  dropZone.addEventListener('drop', function(e) {
      e.preventDefault();
      e.stopPropagation();
-     fetchValue();
-     const files = event.dataTransfer.items;
-     for (let i = 0; i < files.length; i++) {
-         const item = files[i].webkitGetAsEntry();
-         if (item.isFile) { alert('Can only handle folders for now!!')
-             /*console.log("File:", item.name);
-             if (item.name.endsWith(".js")) {
-                 item.file((file) => {
-                     const reader = new FileReader();
-                     reader.readAsText(file);
-                     reader.onload = () => {
-                         console.log(reader.result);
-                     };
-                 });
-             }*/
-         } else if (item.isDirectory) {
-             readDirectory(item);
-         }
+     if(document.getElementById("folderinputbox").value!=""){
+            fetchValue();
+            const files = event.dataTransfer.items;
+            for (let i = 0; i < files.length; i++) {
+                const item = files[i].webkitGetAsEntry();
+                if (item.isFile) { alert('Can only handle folders for now!!')
+                    /*console.log("File:", item.name);
+                    if (item.name.endsWith(".js")) {
+                        item.file((file) => {
+                            const reader = new FileReader();
+                            reader.readAsText(file);
+                            reader.onload = () => {
+                                console.log(reader.result);
+                            };
+                        });
+                    }*/
+                } else if (item.isDirectory) {
+                    readDirectory(item);
+                }
+            }
+     }else{
+        alert("Please set an s3 folder in settings.");
      }
  });
  
@@ -91,11 +82,11 @@ let dirName=[];
                          reader.readAsText(file);
                          reader.onload = ()=>{
                              if(entry.name=="index.html"){
-                                   output.html=formatHTML(reader.result);
+                                   output.html=reader.result;
                              }else if(entry.name=="style.css"){
-                                   output.css= formatCSS(reader.result);
+                                   output.css= reader.result;
                              }else if(entry.name.endsWith(".js")){
-                                   output.js= formatJS(reader.result);
+                                   output.js= reader.result;
                              }
                              mergeOutputs(output,dirName[0])
                          }
@@ -115,40 +106,22 @@ let dirName=[];
             mycss=o.css;
             myjs=o.js;
             str=myhtml;
+            str=removeExternalLinks(str);
+            str=processHtmlClickTag(str);
             if(mycss!=undefined){
                 str=insertAfterMatch(str,"\n<style>\n"+mycss+"\n</style>\n",/<\/head/g);
             }
             if(myjs!=undefined){
                 str=insertAfterMatch(str,"\n<script>\n"+myjs+"\n</script>\n",/<\/body/g);    
              }
+             str=processMetaAdSize(str);
+             str=processReplaceURL(str);
+             if(!respo)
+             str=updateCssContainer(str) 
+
              download(dir,str)
-          // sendRequestToServer(str,dir);
         },1000)
-        
  }
- 
- function formatHTML(str){
-       str=removeExternalLinks(str);
-       str=processHtmlClickTag(str);
-       str=processMetaAdSize(str);
-       str=processReplaceURL(str);
-       if(!respo)
-       str=updateCssContainer(str) 
-
-       return str;   
- }
- function formatCSS(str){
-        str=processReplaceURL(str);
-        if(!respo)
-        str=updateCssContainer(str)
-
-        return str;
-}
-function formatJS(str){
-        str=processReplaceURL(str);
-
-        return str;  
-} 
  function removeExternalLinks(str){
        str=str.replace(/<\s*script.+?src\s*=\s*('|")\s*([a-z0-9])([a-z0-9-_/]+)([a-z0-9])\.js\s*("|')(\s*|.+)>\s*<\/script\s*>/g,"");
        str=str.replace(/<\s*link.+?href\s*=\s*('|")\s*([a-z0-9])([a-z0-9-_/]+)([a-z0-9])\.css\s*("|')(\s*|.+)>/g,"");
@@ -161,15 +134,6 @@ function formatJS(str){
     else
     str=insertAfterMatch(str,CTag,/<\/head/g);
 
-    return str;
- }
- function processMetaAdSize(str){
-    
-    if(str.search(/<meta.+?ad\.size.+("|')>/g)!=-1)
-    str=str.replace(/<meta.+?ad\.size.+("|')>/g,"<meta name=\"ad.size\" content=\"width="+ws+",height="+hs+"\">");
-    else
-    str=insertBeforeMatch(str,"\n\t<meta name=\"ad.size\" content=\"width="+ws+",height="+hs+"\">",/<\/title\s*>/g);
-    
     return str;
  }
  function processReplaceURL(str){
@@ -188,6 +152,17 @@ function formatJS(str){
     return str;
 }
 
+ function processMetaAdSize(str){
+    
+    if(str.search(/<meta.+?ad\.size.+("|')>/g)!=-1)
+    str=str.replace(/<meta.+?ad\.size.+("|')>/g,"<meta name=\"ad.size\" content=\"width="+ws+",height="+hs+"\">");
+    else
+    str=insertBeforeMatch(str,"\n\t<meta name=\"ad.size\" content=\"width="+ws+",height="+hs+"\">",/<\/title\s*>/g);
+    
+    return str;
+ }
+
+
  function updateCssContainer(str) { 
   let [matchedString, newString] = extractMatch(str,/\.container\s*{([^{}]+)}/g);
   if (matchedString) {
@@ -197,6 +172,8 @@ function formatJS(str){
   } 
   return str;
 }
+
+/* For Future
  function sendRequestToServer(str,dir){
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "http://localhost:3000/data", true);
@@ -210,6 +187,7 @@ function formatJS(str){
           };
       
  }
+ */
  function download(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(text));
@@ -219,6 +197,7 @@ function formatJS(str){
     element.click();
     document.body.removeChild(element);
   }
+
  /*JR's REGEX STRING UTILS*/
 
 function extractMatch(string, pattern) {
