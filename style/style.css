@@ -1,6 +1,6 @@
-* {
-    box-sizing: border-box;
-}
+.selector-for-some-widget {
+    box-sizing: content-box;
+ }
 
 html, body {
     padding: 0;

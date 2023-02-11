@@ -8,36 +8,33 @@
     <title>Beeswax Friendly HTML Generator</title>
 
     <meta name="webApp.size" content="width=max,height=max">
-   
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@latest/dist/css/bootstrap.min.css'>
    <link rel="stylesheet" href="style/style.css">
-    <script src='js/main.js' async></script>
+   
 </head>
 <body> 
-    
     <div id="configBox">
-        <div class="rendered-form">
-            <div class="">
-                <h4 access="false" id="control-9723480">Settings:</h4></div>
-                
-            <div class="formbuilder-autocomplete form-group field-autocomplete-1676039400810">
-                <label for="autocomplete-1676039400810" class="formlabel">S3 Folder</label>
-                <input class="form-control" access="false" require-valid-option="false" id="folderinputbox" autocomplete="off">
+        <form>
+            <div class="mb-3">
+                <h5>Settings:</h5></div>
+            <div class="mb-3 form-floating">
+                <input class="form-control form-control-sm" id="folderinputbox" type="text" placeholder="S3 Folder">
+                <label class="form-label">S3 Folder</label>
+                <div class='form-text forminfo'>This is folder after 2023 in S3 up to the creative workspace folder.ex: 2023/<mark>folder1/folder2</mark>/index.html</div>
             </div>
-            <div class='formlabel forminfo'>This is folder after 2023 in S3 up to the creative workspace folder.ex: 2023/<mark>folder1/folder2</mark>/index.html</div>
-            <br>
-            <div class="formbuilder-checkbox-group form-group field-checkbox-group-1676039463256">
-                <label for="checkbox-group-1676039463256" class="formlabel">Other:</label>
+                <label class="form-label">Other:</label>
                 <div class="checkbox-group">
-                    <div class="formbuilder-checkbox">
-                        <input name="checkbox-group-1676039463256[]" access="true" id="checkbox-group-1676039463256-0" value="0" type="checkbox">
-                        <label for="checkbox-group-1676039463256-0" class="formlabel">Responsive: retain 100% for interstitials</label>
+                    <div class="mb-3 form-check">
+                        <input  class="form-check-input"  id="checkbox-respo"  type="checkbox">
+                        <label  class="formlabel form-check-label">Responsive: retain 100% for interstitials</label>
                     </div>
                 </div>
-            </div>
-        </div>
+            </form>
     </div>
     <div id="drop-zone">
         <h1>Drag Creative Workspace Folder Here</h1>
     </div>
+    <script src='js/main.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/bootstrap@latest/dist/js/bootstrap.bundle.min.js'></script>
 </body>
 </html>
