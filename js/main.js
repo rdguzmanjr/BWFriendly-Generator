@@ -25,9 +25,9 @@ let isInter;
 
 
  function fetchValue(){
-    s3URLFolder=document.getElementById("folderinputbox").value;
+    s3URLFolder=document.getElementById("folderinputbox").value.trim().replace(/^\/|\/$/g, "");
     respo=document.getElementById("checkbox-group-1676039463256-0").checked;
-    s3URL =  "https://assets.nativetouch.io/2023/"+s3URLFolder.replace(/^\/|\/$/g, "");;
+    s3URL =  "https://assets.nativetouch.io/2023/"+s3URLFolder;
     s3URLimage = s3URL+"/images/"; 
     s3URLJs =   s3URL+"/js/";
  }
