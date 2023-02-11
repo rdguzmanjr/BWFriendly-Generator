@@ -15,7 +15,7 @@ let hsp=size.split("x")[1]+"px";
 let CTag="\t<script type=\"text/javascript\">\n\t\tvar clickTag = \"{{CLICK_URL}}"+defaultURL+"\";\n\t</script>\n"
 let lines;
 let tmr; 
-let dirName=[];
+let dirName="";
  output={};
  
 
@@ -71,7 +71,7 @@ let dirName=[];
  
  function readDirectory(item) {
      const reader = item.createReader();
-     dirName.push(item.name);
+     dirName=item.name;
      reader.readEntries((entries) => {
 
          for (let i = 0; i < entries.length; i++) {
@@ -88,7 +88,7 @@ let dirName=[];
                              }else if(entry.name.endsWith(".js")){
                                    output.js= reader.result;
                              }
-                             mergeOutputs(output,dirName[0])
+                             mergeOutputs(output)
                          }
                      });
              } else if (entry.isDirectory) {
@@ -99,7 +99,7 @@ let dirName=[];
          }
      });
  }
- function mergeOutputs(o,dir){
+ function mergeOutputs(o){
         clearTimeout(tmr);
         tmr=setTimeout(()=>{
             myhtml=o.html;
@@ -119,7 +119,7 @@ let dirName=[];
              if(!respo)
              str=updateCssContainer(str) 
 
-             download(dir,str)
+             download(dir,dirName)
         },1000)
  }
  function removeExternalLinks(str){
@@ -172,22 +172,6 @@ let dirName=[];
   } 
   return str;
 }
-
-/* For Future
- function sendRequestToServer(str,dir){
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://localhost:3000/data", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({ message:str,filename:dir}));
-        xhr.onload = function() {
-            //console.log(this.responseText);
-        };
-        xhr.onerror= function() {
-            //console.log('error');
-          };
-      
- }
- */
  function download(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(text));
@@ -214,3 +198,20 @@ function insertBeforeMatch(string,replacement,pattern){
 function insertAfterMatch(string,replacement,pattern){
     return result = string.replace(pattern, `${replacement} $&`);
 }
+
+
+/* For Future
+ function sendRequestToServer(str,dir){
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:3000/data", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify({ message:str,filename:dir}));
+        xhr.onload = function() {
+            //console.log(this.responseText);
+        };
+        xhr.onerror= function() {
+            //console.log('error');
+          };
+      
+ }
+ */
