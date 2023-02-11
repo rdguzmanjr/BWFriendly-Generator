@@ -7,12 +7,6 @@ let s3URL =     "https://assets.nativetouch.io/2023/"+s3URLFolder.replace(/^\/|\
 let s3URLimage = s3URL+"/images/";
 let s3URLJs =   s3URL+"/js/";
 
-/*let size="320x480";
-let ws=size.split("x")[0];
-let hs=size.split("x")[1];
-let wsp=size.split("x")[0]+"px";
-let hsp=size.split("x")[1]+"px";
-*/
 let adSize={};
 let output={};
 
@@ -22,8 +16,6 @@ let tmr;
 let dirName="";
 let isInter;
 
-
-
  function fetchValue(){
     s3URLFolder=document.getElementById("folderinputbox").value.trim().replace(/^\/|\/$/g, "");
     respo=document.getElementById("checkbox-respo").checked;
@@ -32,8 +24,6 @@ let isInter;
     s3URLJs =   s3URL+"/js/";
  }
 
-//let str;
- //DROPPER
  var dropZone = document.getElementById('drop-zone');
  dropZone.addEventListener('dragover', function(e) {
      e.preventDefault();
@@ -50,6 +40,7 @@ let isInter;
      e.preventDefault();
      e.stopPropagation();
      if(document.getElementById("folderinputbox").value!=""){
+            if(event.dataTransfer.items.length==1){
             fetchValue();
             const files = event.dataTransfer.items;
             for (let i = 0; i < files.length; i++) {
@@ -66,12 +57,14 @@ let isInter;
                         });
                     }*/
                 } else if (item.isDirectory) {
-                     dirName=item.name;
+                    dirName=item.name;
                     readDirectory(item);
                 }
+            }}else{
+                alert("Alert: Only 1 Creative Workspace Folder at a time.");
             }
      }else{
-        alert("Please set an s3 folder in settings.");
+        alert("Alert: Please indicate the S3 Folder in settings.");
      }
  });
  
@@ -203,25 +196,8 @@ function extractMatch(string, pattern) {
 }
 
 function insertBeforeMatch(string,replacement,pattern){
-   return result = string.replace(pattern, `$& ${replacement}`);
+   return result = string.replace(pattern, `$&${replacement}`);
 }
 function insertAfterMatch(string,replacement,pattern){
-    return result = string.replace(pattern, `${replacement} $&`);
+    return result = string.replace(pattern, `${replacement}$&`);
 }
-
-
-/* For Future
- function sendRequestToServer(str,dir){
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://localhost:3000/data", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({ message:str,filename:dir}));
-        xhr.onload = function() {
-            //console.log(this.responseText);
-        };
-        xhr.onerror= function() {
-            //console.log('error');
-          };
-      
- }
- */

@@ -10,22 +10,23 @@
     <meta name="webApp.size" content="width=max,height=max">
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@latest/dist/css/bootstrap.min.css'>
     <link rel="stylesheet" href="style/style.css">
-   
+     <script defer src='https://cdn.jsdelivr.net/npm/bootstrap@latest/dist/js/bootstrap.bundle.min.js'></script>
+     <script defer src='js/main.js'></script>
 </head>
 <body> 
     <div id="configBox">
         <form>
             <div class="mb-3">
-                <h5>Settings:</h5></div>
+                <h6>Settings:</h6></div>
             <div class="mb-3 form-floating">
-                <input class="form-control form-control-sm" id="folderinputbox" type="text" placeholder="S3 Folder">
-                <label class="form-label">S3 Folder</label>
+                <input class="form-control form-control-sm" id="folderinputbox" type="text" placeholder="Creative Path Folder" autocomplete="off">
+                <label class="form-label">Creative Path Folder</label>
                 <div class='form-text forminfo'>This is folder after 2023 in S3 up to the creative workspace folder.ex: 2023/<mark>folder1/folder2</mark>/index.html</div>
             </div>
                 <label class="form-label">Other:</label>
                 <div class="checkbox-group">
-                    <div class="mb-3 form-check">
-                        <input  class="form-check-input"  id="checkbox-respo"  type="checkbox">
+                    <div class="mb-3 form-switch">
+                        <input  class="form-check-input" id="checkbox-respo"  type="checkbox">
                         <label  class="formlabel form-check-label">Responsive: retain 100% for interstitials</label>
                     </div>
                 </div>
@@ -34,7 +35,7 @@
     <div id="drop-zone">
         <h1>Drag Creative Workspace Folder Here</h1>
     </div>
-    <script src='js/main.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/bootstrap@latest/dist/js/bootstrap.bundle.min.js'></script>
+    
+    
 </body>
 </html>
