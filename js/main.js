@@ -119,7 +119,7 @@ let dirName="";
              if(!respo)
              str=updateCssContainer(str) 
 
-             download(dir,dirName)
+             download(dirName,str)
         },1000)
  }
  function removeExternalLinks(str){
