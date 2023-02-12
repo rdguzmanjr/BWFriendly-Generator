@@ -1,7 +1,7 @@
+'use strict'; 
+
 let defaultURL="http://wwww.google.com";
-
 let respo=false;
-
 let s3URLFolder = "nars/nars_hotspot"
 let s3URL =     "https://assets.nativetouch.io/2023/"+s3URLFolder.replace(/^\/|\/$/g, "");
 let s3URLimage = s3URL+"/images/";
@@ -11,10 +11,9 @@ let adSize={};
 let output={};
 
 let CTag="\t<script type=\"text/javascript\">\n\t\tvar clickTag = \"{{CLICK_URL}}"+defaultURL+"\";\n\t</script>\n"
-let lines;
 let tmr; 
 let dirName="";
-let isInter;
+
 
  function fetchValue(){
     s3URLFolder=document.getElementById("folderinputbox").value.trim().replace(/^\/|\/$/g, "");
@@ -97,6 +96,7 @@ let isInter;
      });
  }
  function mergeOutputs(o){
+        let str,myhtml,myjs,mycss;
         clearTimeout(tmr);
         tmr=setTimeout(()=>{
             myhtml=o.html;
@@ -196,8 +196,8 @@ function extractMatch(string, pattern) {
 }
 
 function insertBeforeMatch(string,replacement,pattern){
-   return result = string.replace(pattern, `$&${replacement}`);
+    return string.replace(pattern, `$&${replacement}`);
 }
 function insertAfterMatch(string,replacement,pattern){
-    return result = string.replace(pattern, `${replacement}$&`);
+    return string.replace(pattern, `${replacement}$&`);
 }
