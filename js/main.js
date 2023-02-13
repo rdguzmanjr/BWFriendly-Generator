@@ -166,6 +166,7 @@ function processMetaAdSize(str){
  }
 
  function updateContainerStyle(str) { 
+  let wiwi,hihi;
   let [matchedString, newString] = extractMatch(str,/\.container\s*{([^{}]+)}/g);
   if (matchedString) {
       wiwi=matchedString.replace(/width\s*(:(.*?);)/, 'width:'+adSize.width+'px;');
