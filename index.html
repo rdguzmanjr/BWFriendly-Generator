@@ -14,28 +14,27 @@
      <script defer src='js/main.js'></script>
 </head>
 <body> 
-    <div id="configBox">
+    <div id="configBox" class="position-absolute top-0 start-0 m-lg-3 w-25 z-3">
         <form>
-            <div class="mb-3">
-                <h6>Settings:</h6></div>
-            <div class="mb-3 form-floating">
-                <input class="form-control form-control-sm" id="folderinputbox" type="text" placeholder="Creative Path Folder" autocomplete="off">
-                <label class="form-label">Creative Path Folder</label>
-                <div class='form-text forminfo'>This is folder after 2023 in S3 up to the creative workspace folder.ex: 2023/<mark>folder1/folder2</mark>/index.html</div>
+            <div class="mb-1">
+                <h6 class="text-opacity-25">Settings:</h6></div>
+            <div class="mb-4 form-floating">
+                <input class="form-control form-control-sm" id="folderinputbox" type="text" placeholder="Creative Workspace Path in S3" autocomplete="off">
+                <label class="">Creative Workspace Path in S3</label>
+                <div class='form-text'>This is folder after 2023 in S3 up to the creative workspace folder.ex: 2023/<mark>folder1/folder2</mark>/index.html</div>
             </div>
                 <label class="form-label">Other:</label>
                 <div class="checkbox-group">
                     <div class="mb-3 form-switch">
                         <input  class="form-check-input" id="checkbox-respo"  type="checkbox">
-                        <label  class="formlabel form-check-label">Responsive: retain 100% for interstitials</label>
+                        <label  class="form-check-label">Retain 100% for interstitials</label>
                     </div>
                 </div>
             </form>
     </div>
-    <div id="drop-zone">
+    <div id="drop-zone" class="z-1">
         <h1>Drag Creative Workspace Folder Here</h1>
     </div>
-    
     
 </body>
 </html>
