@@ -44,7 +44,7 @@ let dirName="";
             const files = event.dataTransfer.items;
             for (let i = 0; i < files.length; i++) {
                 const item = files[i].webkitGetAsEntry();
-                if (item.isFile) { alert('Can only handle folders for now!!')
+                if (item.isFile) { alert('Alert: Only Creative Workspace Folder is allowed.')
                     /*console.log("File:", item.name);
                     if (item.name.endsWith(".js")) {
                         item.file((file) => {
@@ -63,7 +63,7 @@ let dirName="";
                 alert("Alert: Only 1 Creative Workspace Folder at a time.");
             }
      }else{
-        alert("Alert: Please indicate the S3 Folder in settings.");
+        alert("Alert: Please indicate the workspace folder path in settings.");
      }
  });
  
