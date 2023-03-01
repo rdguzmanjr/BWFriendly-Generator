@@ -190,10 +190,15 @@ function processMetaAdSize(str){
       if(str==undefined)return undefined;
       if(str.search(/window\.onload\s*=(\s*\w+)(;|)/)!=-1){
         var funct=str.match(/window\.onload\s*=(\s*\w+)(;|)/);
-        str=str.replace(/window\.onload\s*=(\s*\w+)(;|)/,`window.addEventListener("load",${funct[1].trim()});`)
+        str=str.replace(/window\.onload\s*=(\s*\w+)(;|)/,'')
+        if(str.search(/\}\s*\)\s*\(\)\s*(;|)\s*$/)!=-1) {
+            str=insertAfterMatch(str,`\n${funct[1].trim()}();\n`,/\}\s*\)\s*\(\)\s*(;|)\s*$/);
+        }else{
+            str=str+=`${funct[1].trim()}();`;
+        }    
       }
       return str;
- }
+}
  /*JR's REGEX STRING UTILS*/
 
 function extractMatch(string, pattern) {
