@@ -114,7 +114,7 @@ let dirName="";
              }
              str=processMetaAdSize(str);
              str=processReplaceURL(str);
-            // download(dirName,str)
+             download(dirName,str)
         },1000)
  }
  function removeExternalLinks(str){
