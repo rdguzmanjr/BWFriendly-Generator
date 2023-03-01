@@ -105,6 +105,7 @@ let dirName="";
             str=myhtml;
             str=removeExternalLinks(str);
             str=processHtmlClickTag(str);
+            myjs=fixWindowOnLoad(myjs);
             if(mycss!=undefined){
                 str=insertAfterMatch(str,"\n<style>\n"+mycss+"\n</style>\n",/<\/head/g);
             }
@@ -113,7 +114,7 @@ let dirName="";
              }
              str=processMetaAdSize(str);
              str=processReplaceURL(str);
-             download(dirName,str)
+            // download(dirName,str)
         },1000)
  }
  function removeExternalLinks(str){
@@ -185,7 +186,14 @@ function processMetaAdSize(str){
     element.click();
     document.body.removeChild(element);
   }
-
+ function fixWindowOnLoad(str){
+      if(str==undefined)return undefined;
+      if(str.search(/window\.onload\s*=(\s*\w+)(;|)/)!=-1){
+        var funct=str.match(/window\.onload\s*=(\s*\w+)(;|)/);
+        str=str.replace(/window\.onload\s*=(\s*\w+)(;|)/,`window.addEventListener("load",${funct[1].trim()});`)
+      }
+      return str;
+ }
  /*JR's REGEX STRING UTILS*/
 
 function extractMatch(string, pattern) {
