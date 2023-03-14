@@ -2,25 +2,23 @@
 
 let defaultURL="http://wwww.google.com";
 let respo=false;
-let s3URLFolder = "nars/nars_hotspot"
+let clientIframe=false;
+let s3URLFolder = ""
 let s3URL =     "https://assets.nativetouch.io/2023/"+s3URLFolder.replace(/^\/|\/$/g, "");
-let s3URLimage = s3URL+"/images/";
-let s3URLJs =   s3URL+"/js/";
+let s3URLimage = "";
+let s3URLJs =   "";
 
 let adSize={};
-let output={};
 
 let CTag="\t<script type=\"text/javascript\">\n\t\tvar clickTag = \"{{CLICK_URL}}"+defaultURL+"\";\n\t</script>\n"
-let tmr; 
-let dirName="";
-
+var initedTmr;
+var outputObj={};
 
  function fetchValue(){
     s3URLFolder=document.getElementById("folderinputbox").value.trim().replace(/^\/|\/$/g, "");
     respo=document.getElementById("checkbox-respo").checked;
+    clientIframe=document.getElementById("checkbox-iframe").checked;
     s3URL =  "https://assets.nativetouch.io/2023/"+s3URLFolder;
-    s3URLimage = s3URL+"/images/"; 
-    s3URLJs =   s3URL+"/js/";
  }
 
  var dropZone = document.getElementById('drop-zone');
@@ -36,86 +34,96 @@ let dirName="";
  });
  
  dropZone.addEventListener('drop', function(e) {
+     outputObj={};
      e.preventDefault();
      e.stopPropagation();
+     fetchValue();
      if(document.getElementById("folderinputbox").value!=""){
-            if(event.dataTransfer.items.length==1){
-            fetchValue();
             const files = event.dataTransfer.items;
             for (let i = 0; i < files.length; i++) {
                 const item = files[i].webkitGetAsEntry();
-                if (item.isFile) { alert('Alert: Only Creative Workspace Folder is allowed.')
-                    /*console.log("File:", item.name);
-                    if (item.name.endsWith(".js")) {
-                        item.file((file) => {
-                            const reader = new FileReader();
-                            reader.readAsText(file);
-                            reader.onload = () => {
-                                console.log(reader.result);
-                            };
-                        });
-                    }*/
+                if (item.isFile) { 
+                    alert('Alert: Only Creative Workspace Folder is allowed.');
                 } else if (item.isDirectory) {
-                    dirName=item.name;
-                    readDirectory(item);
+                    readMainDirectory(item,item.name);
                 }
-            }}else{
-                alert("Alert: Only 1 Creative Workspace Folder at a time.");
             }
      }else{
         alert("Alert: Please indicate the workspace folder path in settings.");
      }
  });
- 
- function readDirectory(item) {
-     const reader = item.createReader();
-     reader.readEntries((entries) => {
-         for (let i = 0; i < entries.length; i++) {
-             const entry = entries[i];
-             if (entry.isFile && entry.name!='.DS_Store' && !entry.name.endsWith('.min.js')) {
-                     entry.file((file) => {
-                         const reader = new FileReader();
-                         reader.readAsText(file);
-                         reader.onload = ()=>{
-                             if(entry.name=="index.html"){
-                                   output.html=reader.result;
-                             }else if(entry.name=="style.css"){
-                                   output.css= reader.result;
-                             }else if(entry.name.endsWith(".js")){
-                                   output.js= reader.result;
-                             }
-                             mergeOutputs(output)
-                         }
-                     });
-             } else if (entry.isDirectory) {
-                 if(entry.name!="images")
-                 readDirectory(entry);
-             }
-             
-         }
-     });
+
+
+ function readMainDirectory(item,dirname){
+     if(!outputObj.hasOwnProperty(dirname))
+     outputObj[dirname]={};
+     readDirectory(item,dirname);
  }
- function mergeOutputs(o){
+
+ function readDirectory(item,dirname=null) {
+    const reader = item.createReader();
+    reader.readEntries((entries) => {
+        for (let i = 0; i < entries.length; i++) {
+            const entry = entries[i];
+            if (entry.isFile && entry.name!='.DS_Store' && !entry.name.endsWith('.min.js')) {
+                    entry.file((file) => {
+                        const reader = new FileReader();
+                        reader.readAsText(file);
+                        reader.onload = ()=>{
+                            if(entry.name=="index.html"){
+                                outputObj[dirname].html=reader.result;
+                            }else if(entry.name=="style.css"){
+                                outputObj[dirname].css= reader.result;
+                            }else if(entry.name.endsWith(".js")){
+                                outputObj[dirname].js = reader.result;
+                            }
+                            clearTimeout(initedTmr)
+                            initedTmr=setTimeout(()=>{
+                                generateOutput(outputObj);
+                            },500)
+                        }
+                    });
+            } else if (entry.isDirectory) {
+                if(entry.name!="images")
+                readDirectory(entry,dirname);
+            }
+            
+        }
+    });
+}
+ function generateOutput(ooobj){
         let str,myhtml,myjs,mycss;
-        clearTimeout(tmr);
-        tmr=setTimeout(()=>{
-            myhtml=o.html;
-            mycss=o.css;
-            myjs=o.js;
+        Object.entries(ooobj).forEach(entry => {
+            const [key, value] = entry;
+            myhtml=value.html;
+            mycss=value.css;
+            myjs=value.js;
+           
             str=myhtml;
             str=removeExternalLinks(str);
             str=processHtmlClickTag(str);
             myjs=fixWindowOnLoad(myjs);
+
             if(mycss!=undefined){
                 str=insertAfterMatch(str,"\n<style>\n"+mycss+"\n</style>\n",/<\/head/g);
             }
             if(myjs!=undefined){
                 str=insertAfterMatch(str,"\n<script>\n"+myjs+"\n</script>\n",/<\/body/g);    
-             }
-             str=processMetaAdSize(str);
-             str=processReplaceURL(str);
-             download(dirName,str)
-        },1000)
+            }
+            if(respo)
+            str=addmaincontainer(str);
+            str=processMetaAdSize(str);
+            s3URLimage = `${s3URL}/${key}/images/`;
+            s3URLJs =    `${s3URL}/${key}/js/`;
+            str=processReplaceURL(str,key);
+            download(key,str)
+        });
+ }
+ function addmaincontainer(str){
+    str=insertBeforeMatch(str,`\n\t<div class='main-container'>`,/<body>/g);
+    str=insertAfterMatch(str,`</div>\n`,/<\/body>/g);
+    str=insertBeforeMatch(str,`\n.main-container {\n\twidth:100vh;\n\theight:100vh;\n}`,/<style>/g);
+    return str;
  }
  function removeExternalLinks(str){
        str=str.replace(/<\s*script.+?src\s*=\s*('|")\s*([a-z0-9])([a-z0-9-_/]+)([a-z0-9])\.js\s*("|')(\s*|.+)>\s*<\/script\s*>/g,"");
@@ -131,11 +139,11 @@ let dirName="";
 
     return str;
  }
- function processReplaceURL(str){
+ function processReplaceURL(str,dirname){
     if(str.search(/(https|http):\/\/(.+)\/images\//g)!=-1){
         str=str.replace(/(https|http):\/\/(.+)\/images\//g, s3URLimage);
     }else if(str.search(/images\//g)!=-1){
-       str=str.replace(/images\//g, s3URLimage);
+       str=str.replace(/images\//g,s3URLimage);
     }
 
     if(str.search(/(https|http):\/\/(.+)\/js\//g)!=-1){
@@ -208,10 +216,48 @@ function extractMatch(string, pattern) {
     }
     return [null, string];
 }
-
 function insertBeforeMatch(string,replacement,pattern){
     return string.replace(pattern, `$&${replacement}`);
 }
 function insertAfterMatch(string,replacement,pattern){
     return string.replace(pattern, `${replacement}$&`);
 }
+
+
+function clientURL(){
+    return "https"
+}
+let htmlTempString=`<!DOCTYPE html>\n`+
+`<html lang="en">\n`+
+`<head>\n`+
+`   <meta charset="UTF-8"></meta>\n`+
+`   <meta http-equiv="X-UA-Compatible" content="IE=edge">\n`+
+`   <meta name="viewport" content="width=device-width, initial-scale=1.0">\n`+
+`   <title>Document</title>\n`+
+`   <meta name="ad.size" content="width=120, height=600">\n`+
+`   <script type="text/javascript">\n`+
+`       var clickTag = "{{CLICK_URL}}${clientURL()}";\n`+
+`   </script>\n`+
+`   <style>\n`+
+`     html, body {\n`+
+`       margin : 0;\n`+
+`       padding :0;\n`+
+`       height: 100vh;\n`+
+`      }\n`+
+`     .clickthru {\n`+
+`       position: absolute;\n`+
+`       width : 100%;\n`+
+`       height : 100%;\n`+
+`       background-color: #ff000000;\n`+
+`      }\n`+
+`   </style>\n`+
+`</head>\n`+
+`<body>\n`+
+`   <div class="clickthru"></div>\n`+
+`   <iframe src="https://assets.nativetouch.io/2023/sensodyne/EN_SEN23005_120x600/index.html" frameborder="0" width="120" height="600"></iframe>\n`+
+`   <script>\n`+
+`       document.querySelector('.clickthru').addEventListener('click', () =>  window.open ( window.clickTag) );\n`+
+`   </script>\n`+
+`</body>\n`+
+`</html>`;
+
