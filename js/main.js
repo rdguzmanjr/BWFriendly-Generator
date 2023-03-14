@@ -7,18 +7,20 @@ let s3URLFolder = ""
 let s3URL =     "https://assets.nativetouch.io/2023/"+s3URLFolder.replace(/^\/|\/$/g, "");
 let s3URLimage = "";
 let s3URLJs =   "";
-
+let s3ClientURL = "";
 let adSize={};
 
 let CTag="\t<script type=\"text/javascript\">\n\t\tvar clickTag = \"{{CLICK_URL}}"+defaultURL+"\";\n\t</script>\n"
-var initedTmr;
+var initedTmr,clientTmr;
 var outputObj={};
+
 
  function fetchValue(){
     s3URLFolder=document.getElementById("folderinputbox").value.trim().replace(/^\/|\/$/g, "");
     respo=document.getElementById("checkbox-respo").checked;
     clientIframe=document.getElementById("checkbox-iframe").checked;
     s3URL =  "https://assets.nativetouch.io/2023/"+s3URLFolder;
+    s3ClientURL = document.getElementById("clientURLinput").value.trim();
  }
 
  var dropZone = document.getElementById('drop-zone');
@@ -57,7 +59,16 @@ var outputObj={};
  function readMainDirectory(item,dirname){
      if(!outputObj.hasOwnProperty(dirname))
      outputObj[dirname]={};
-     readDirectory(item,dirname);
+     if(!clientIframe){
+            readDirectory(item,dirname);
+     }else{
+            clearTimeout(clientTmr);
+            clientTmr=setTimeout(()=>{
+                generateClientIframe(outputObj);
+            },500)
+            
+     }
+    
  }
 
  function readDirectory(item,dirname=null) {
@@ -91,6 +102,28 @@ var outputObj={};
         }
     });
 }
+
+
+
+ function generateClientIframe(ooobj){
+    let _dir,_templateHtml,_key;
+    Object.entries(ooobj).forEach(entry => {
+        const [key, value] = entry;
+        _key=encodeURI(key);
+
+        _dir=key.match(/(\d+)(x|X)(\d+)/);
+        _templateHtml=htmlTempString;
+        _templateHtml=_templateHtml.replaceAll('***clientW***',_dir[1]);
+        _templateHtml=_templateHtml.replaceAll('***clientH***',_dir[3]);
+        _templateHtml=_templateHtml.replace('***clienturl***',s3ClientURL);
+        _templateHtml=_templateHtml.replace('***clientS3Path***',`${s3URL}/${_key}/index.html`);
+        download(key,_templateHtml);
+    })
+
+ }
+
+
+
  function generateOutput(ooobj){
         let str,myhtml,myjs,mycss;
         Object.entries(ooobj).forEach(entry => {
@@ -223,10 +256,6 @@ function insertAfterMatch(string,replacement,pattern){
     return string.replace(pattern, `${replacement}$&`);
 }
 
-function clientURL(){
-    return "https"
-}
-
 let htmlTempString=`<!DOCTYPE html>\n`+
 `<html lang="en">\n`+
 `<head>\n`+
@@ -234,9 +263,9 @@ let htmlTempString=`<!DOCTYPE html>\n`+
 `   <meta http-equiv="X-UA-Compatible" content="IE=edge">\n`+
 `   <meta name="viewport" content="width=device-width, initial-scale=1.0">\n`+
 `   <title>Document</title>\n`+
-`   <meta name="ad.size" content="width=120, height=600">\n`+
+`   <meta name="ad.size" content="width=***clientW***, height=***clientH***">\n`+
 `   <script type="text/javascript">\n`+
-`       var clickTag = "{{CLICK_URL}}${clientURL()}";\n`+
+`       var clickTag = "{{CLICK_URL}}***clienturl***";\n`+
 `   </script>\n`+
 `   <style>\n`+
 `     html, body {\n`+
@@ -254,7 +283,7 @@ let htmlTempString=`<!DOCTYPE html>\n`+
 `</head>\n`+
 `<body>\n`+
 `   <div class="clickthru"></div>\n`+
-`   <iframe src="https://assets.nativetouch.io/2023/sensodyne/EN_SEN23005_120x600/index.html" frameborder="0" width="120" height="600"></iframe>\n`+
+`   <iframe src="***clientS3Path***" frameborder="0" width="***clientW***" height="***clientH***"></iframe>\n`+
 `   <script>\n`+
 `       document.querySelector('.clickthru').addEventListener('click', () =>  window.open ( window.clickTag) );\n`+
 `   </script>\n`+
