@@ -110,8 +110,10 @@ var outputObj={};
     Object.entries(ooobj).forEach(entry => {
         const [key, value] = entry;
         _key=encodeURI(key);
-
         _dir=key.match(/(\d+)(x|X)(\d+)/);
+        if(_dir===null){
+            _dir=[0,320,2,480]; 
+        }
         _templateHtml=htmlTempString;
         _templateHtml=_templateHtml.replaceAll('***clientW***',_dir[1]);
         _templateHtml=_templateHtml.replaceAll('***clientH***',_dir[3]);
