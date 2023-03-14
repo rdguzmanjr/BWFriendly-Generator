@@ -223,10 +223,10 @@ function insertAfterMatch(string,replacement,pattern){
     return string.replace(pattern, `${replacement}$&`);
 }
 
-
 function clientURL(){
     return "https"
 }
+
 let htmlTempString=`<!DOCTYPE html>\n`+
 `<html lang="en">\n`+
 `<head>\n`+
