@@ -10,7 +10,8 @@ let s3URLJs =   "";
 let s3ClientURL = "";
 let adSize={};
 
-let CTag="\t<script type=\"text/javascript\">\n\t\tvar clickTag = \"{{CLICK_URL}}"+defaultURL+"\";\n\t</script>\n"
+let CTag=`\t<script type="text/javascript">\n\t\tvar clickTag = "{{CLICK_URL}}${defaultURL}";\n\t</script>\n`;
+
 var initedTmr,clientTmr;
 var outputObj={};
 
