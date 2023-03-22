@@ -66,7 +66,7 @@ var outputObj={};
             clearTimeout(clientTmr);
             clientTmr=setTimeout(()=>{
                 generateClientIframe(outputObj);
-            },500)
+            },2000)
             
      }
     
@@ -92,7 +92,7 @@ var outputObj={};
                             clearTimeout(initedTmr)
                             initedTmr=setTimeout(()=>{
                                 generateOutput(outputObj);
-                            },500)
+                            },2000)
                         }
                     });
             } else if (entry.isDirectory) {
