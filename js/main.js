@@ -148,7 +148,7 @@ var outputObj={};
             }
             if(respo)
             str=addmaincontainer(str);
-            str=processMetaAdSize(str);
+            //str=processMetaAdSize(str);
             s3URLimage = `${s3URL}/${key}/images/`;
             s3URLJs =    `${s3URL}/${key}/js/`;
             str=processReplaceURL(str,key);
