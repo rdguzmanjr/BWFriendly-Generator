@@ -269,6 +269,49 @@ let htmlTempString=`<!DOCTYPE html>\n`+
 `   <meta name="ad.size" content="width=***clientW***, height=***clientH***">\n`+
 `   <script type="text/javascript">\n`+
 `       var clickTag = "{{CLICK_URL}}***clienturl***";\n`+
+`var NTparams = {\n`+
+
+   ` campaignId : "{{CAMPAIGN_ID}}",\n`+
+
+   ` creativeId : "{{CREATIVE_ID}}",\n`+
+
+    `placementId : "{{PLACEMENT_ID}}",\n`+
+
+   ` lineItemId : "{{LINE_ITEM_ID}}",\n`+
+
+    `lineItemIdAlt : "{{LINE_ITEM_ID_ALT}}",\n`+
+
+    `lineItemName : "{{LINE_ITEM_NAME}}",\n`+
+
+   ` advertiserId : "{{ADVERTISER_ID}}",\n`+
+
+   ` creativeSize : "{{WIDTH}}x{{HEIGHT}}",\n`+
+
+    `appId : "{{APP_ID}}",\n`+
+
+    `appName : "{{APP_NAME}}",\n`+
+
+    `appBundle : "{{APP_BUNDLE}}",\n`+
+
+    `inventorySource : "{{INVENTORY_SOURCE}}",\n`+
+   
+    `domain : "{{DOMAIN}}",\n`+
+
+    `countryCode : "{{COUNTRY_CODE}}",\n`+
+
+    `zipCode : "{{ZIP_CODE}}",\n`+
+
+    `auctionId : "{{AUCTION_ID}}",\n`+
+
+    `gpsLat : "{{LAT}}",\n`+
+
+    `gpsLng : "{{LONG}}",\n`+
+
+    `userId : "{{USER_ID}}",\n`+
+
+    `ipAddress : "{{IP_ADDRESS}}",\n`+
+
+    `};\n`+
 `   </script>\n`+
 `   <style>\n`+
 `     html, body {\n`+
@@ -288,7 +331,40 @@ let htmlTempString=`<!DOCTYPE html>\n`+
 `   <div class="clickthru"></div>\n`+
 `   <iframe src="***clientS3Path***" frameborder="0" width="***clientW***" height="***clientH***"></iframe>\n`+
 `   <script>\n`+
-`       document.querySelector('.clickthru').addEventListener('click', () =>  window.open ( window.clickTag) );\n`+
+`       document.querySelector('.clickthru').addEventListener('click',exit );\n`+
+`function loadPixelNT () {\n`+
+
+   ` const script = document.createElement('script');\n`+
+    
+   ` script.src = 'https://assets.nativetouch.io/2023/alpinepark/PixelNT.js';\n`+
+    
+  `  script.onload = initPixelNT;\n`+
+
+   ` document.body.appendChild ( script );\n`+
+
+ `}\n`+
+
+ `function initPixelNT () {\n`+
+
+   ` PixelNT.init ( NTparams );\n`+
+
+   ` PixelNT.fireImpressionPixel ('rendered_impression');\n`+
+
+   ` PixelNT.fireTotalCustomEvents ( 1 );\n`+
+
+ `}\n`+
+
+ `function exit () {\n`+
+
+   ` if ( PixelNT ) {\n`+
+     `  PixelNT.fireEventPixel ('exit', 'Clickthru Exit');\n`+
+    `}\n`+
+
+  ` window.open(clickTag);\n`+
+
+ `}\n`+
+
+ `loadPixelNT ();\n`+
 `   </script>\n`+
 `</body>\n`+
 `</html>`;
