@@ -336,7 +336,7 @@ let htmlTempString=`<!DOCTYPE html>\n`+
 
    ` const script = document.createElement('script');\n`+
     
-   ` script.src = 'https://assets.nativetouch.io/2023/alpinepark/PixelNT.js';\n`+
+   ` script.src = 'https://assets.nativetouch.io/PixelNT/PixelNT.js';\n`+
     
   `  script.onload = initPixelNT;\n`+
 
