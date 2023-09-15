@@ -357,7 +357,7 @@ let htmlTempString=`<!DOCTYPE html>\n`+
  `function exit () {\n`+
 
    ` if ( PixelNT ) {\n`+
-     `  PixelNT.fireEventPixel ('exit', 'Clickthru Exit');\n`+
+     `  PixelNT.fireEventPixel ('engagements', 'Clickthru Exit');\n`+
     `}\n`+
 
   ` window.open(clickTag);\n`+
