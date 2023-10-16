@@ -20,7 +20,7 @@ var outputObj={};
     s3URLFolder=document.getElementById("folderinputbox").value.trim().replace(/^\/|\/$/g, "");
     respo=document.getElementById("checkbox-respo").checked;
     clientIframe=document.getElementById("checkbox-iframe").checked;
-    s3URL =  "https://assets.nativetouch.io/2022/"+s3URLFolder;
+    s3URL =  "https://assets.nativetouch.io/2023/"+s3URLFolder;
     s3ClientURL = document.getElementById("clientURLinput").value.trim();
  }
 
